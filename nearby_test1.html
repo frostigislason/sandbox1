@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Heimaslóð Staðsetning</title>
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    redirectBasedOnLocation, 
+                    showError, 
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function redirectBasedOnLocation(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Define your location-based URLs here
+            const urls = [
+                { lat: 63.44364691518647, lon: -20.262714516452824, url: 'https://heimaslod.is/index.php/Skansinn' }, // Skansinn
+                { lat: 63.443459585050185, lon: -20.26793593794051, url: 'https://heimaslod.is/index.php/B%C3%A6jarbryggja' }, // Bæjarbryggja
+                { lat: 63.44222350912413, lon: -20.260006174988355, url: 'https://example.com/newyork' }, // Bakkastígur
+            ];
+
+            // Determine which URL to redirect to based on location
+            for (let i = 0; i < urls.length; i++) {
+                const location = urls[i];
+                if (isNearby(latitude, longitude, location.lat, location.lon)) {
+                    window.location.href = location.url;
+                    return;
+                }
+            }
+
+            // If no location matched, redirect to a default page
+            window.location.href = 'https://example.com/default';
+        }
+
+        function isNearby(lat1, lon1, lat2, lon2, radius = 0.05) {
+            const R = 6371; // Radius of the Earth in kilometers
+            const dLat = degreesToRadians(lat2 - lat1);
+            const dLon = degreesToRadians(lon2 - lon1);
+            const a = 
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(degreesToRadians(lat1)) * Math.cos(degreesToRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2); 
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+            const distance = R * c; // Distance in kilometers
+
+            return distance <= radius;
+        }
+
+        function degreesToRadians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
+        }
+
+        // Get location when the page loads
+        window.onload = getLocation;
+    </script>
+</head>
+<body>
+    <h1>Checking your location...</h1>
+</body>
+</html>
