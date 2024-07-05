@@ -19,6 +19,8 @@
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
 
+            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
             // Define your location-based URLs here
             const urls = [
                 { lat: 63.44364691518647, lon: -20.262714516452824, url: 'https://heimaslod.is/index.php/Skansinn' }, // Skansinn
@@ -30,12 +32,14 @@
             for (let i = 0; i < urls.length; i++) {
                 const location = urls[i];
                 if (isNearby(latitude, longitude, location.lat, location.lon)) {
+                    console.log(`Redirecting to: ${location.url}`);
                     window.location.href = location.url;
                     return;
                 }
             }
 
             // If no location matched, redirect to a default page
+            console.log("Redirecting to default page");
             window.location.href = 'https://example.com/default';
         }
 
@@ -50,6 +54,7 @@
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
             const distance = R * c; // Distance in kilometers
 
+            console.log(`Distance: ${distance} km`);
             return distance <= radius;
         }
 
